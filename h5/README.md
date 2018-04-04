@@ -6,7 +6,7 @@ Sono disponibili vari pesi a seconda del modello ResNet applicato (50, 101, 152)
 
 Il peso va rinominato in `base.h5`.
 
-Il file `pretrained.h5` se esiste è quello che viene caricato all'inizio del training come partenza (è impostato sulle classi indicate in `configYOLO.json`).
+Il file `pretrained.h5` se esiste è quello che viene caricato all'inizio del training come partenza (è impostato sulle classi indicate in `configRetinaNet.json`).
 
 Il file `result.h5` se esiste è quello creato alla fine dell'allenamento.
 
