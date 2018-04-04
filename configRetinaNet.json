@@ -1,0 +1,29 @@
+{
+  "train": {
+    "batch_size": 4,
+    "epochs": 200,
+    "base_lr": 1e-4,
+    "patience": 100,
+    "do_freeze_layers": true,
+    "freeze_pops": 0,
+    "ofreeze_pops": 24,
+    "train_val_split": 0.8
+  },
+  "path": {
+    "pretrained_weights": "./h5/pretrained.h5",
+    "base_weights": "./h5/base.h5",
+    "trained_weights": "./h5/result.h5",
+    "chkpnt_weights": "./h5/chkpnt_best.h5",
+    "images": "../../dataset/person_calling/images/",
+    "annotations": "../../dataset/person_calling/annotations/",
+    "test_images": "../../dataset/test/",
+    "test_result": "../../dataset/test/result/",
+    "log": "./logs/"
+  },
+  "model": {
+    "model_image": false,
+    "classes": [
+      "person_calling"
+    ]
+  }
+}
