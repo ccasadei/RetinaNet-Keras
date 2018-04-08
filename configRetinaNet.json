@@ -1,13 +1,13 @@
 {
   "train": {
-    "batch_size": 1,
+    "batch_size": 8,
     "epochs": 200,
-    "base_lr": 1e-4,
+    "base_lr": 1e-5,
     "patience": 100,
-    "do_freeze_layers": true,
+    "do_freeze_layers": false,
     "freeze_pops": 0,
     "ofreeze_pops": 24,
-    "train_val_split": 1.0,
+    "train_val_split": 0.8,
     "augmentation": false
   },
   "path": {
