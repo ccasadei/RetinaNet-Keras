@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from model.generator import getGenerators
+from model.generator import get_generators
 from model.visualization import draw_annotations, draw_boxes
 
 from config import Config
@@ -9,7 +9,7 @@ from config import Config
 config = Config('configRetinaNet.json')
 
 # creo il generatore per le immagini e le annotazioni
-generator, _, _, _ = getGenerators(config.images_path, config.annotations_path, 1., 1, config.classes, shuffle=False, transform=False)
+generator, _, _, _ = get_generators(config.images_path, config.annotations_path, 1., 1, config.classes, shuffle=False, transform=False)
 
 # creo la finestra di visualizzazione delle immagini
 cv2.namedWindow('Immagine', cv2.WINDOW_NORMAL)

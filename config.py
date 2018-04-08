@@ -13,6 +13,7 @@ class Config:
         self.do_freeze_layers = config['train']['do_freeze_layers']
         self.train_val_split = config['train']['train_val_split']
         self.freeze_pops = config['train']['freeze_pops']
+        self.augmentation = config['train']['augmentation']
 
         self.pretrained_weights_path = config['path']['pretrained_weights']
         self.base_weights_path = config['path']['base_weights']
@@ -26,3 +27,6 @@ class Config:
 
         self.model_image = config['model']['model_image']
         self.classes = config['model']['classes']
+
+        self.test_save_annotations = config['test']['save_annotations']
+        self.test_start_index = config['test']['start_index']

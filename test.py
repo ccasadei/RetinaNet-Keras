@@ -2,6 +2,10 @@ import matplotlib as mpl
 
 mpl.use('Agg')
 
+import cv2
+
+from model.pascal_voc import save_annotations
+
 from model.image import read_image_bgr, preprocess_image, resize_image, read_image_rgb
 
 import numpy as np
@@ -118,10 +122,14 @@ print("Caricati pesi " + wname)
 
 # carico le immagini originali e quelle ridimensionate in due array
 # ne prendo una alla volta per minimizzare la memoria GPU necessaria
-for imgf in os.listdir(config.test_images_path):
+start_index = config.test_start_index - 1
+for nimage, imgf in enumerate(sorted(os.listdir(config.test_images_path))):
     imgfp = os.path.join(config.test_images_path, imgf)
     if os.path.isfile(imgfp):
-        img = read_image_bgr(imgfp)
+        try:
+            img = read_image_bgr(imgfp)
+        except:
+            continue
         img = preprocess_image(img.copy())
         img, scale = resize_image(img)
 
@@ -157,25 +165,43 @@ for imgf in os.listdir(config.test_images_path):
         image_detections = np.append(image_boxes, image_scores, axis=1)
         image_predicted_labels = indices[1][scores_sort]
 
-        # prepara una tavolozza di colori
-        colors = plt.cm.hsv(np.linspace(0, 1, len(classes))).tolist()
+        if config.test_save_annotations:
+            orig_image = cv2.imread(imgfp)
 
-        # disegno i box
-        plt.imshow(orig_image)
+            boxes = []
+            if len(image_boxes) > 0:
+                for i, box in enumerate(image_boxes):
+                    box_json = {
+                        "name": classes[image_predicted_labels[i]],
+                        "xmin": int(box[0]),
+                        "ymin": int(box[1]),
+                        "xmax": int(box[2]),
+                        "ymax": int(box[3])
+                    }
+                    boxes.append(box_json)
+            save_annotations(config.test_result_path,
+                             "{0:08d}".format(start_index + nimage),
+                             orig_image,
+                             boxes)
+        else:
+            # prepara una tavolozza di colori
+            colors = plt.cm.hsv(np.linspace(0, 1, len(classes))).tolist()
+            # disegno i box
+            plt.imshow(orig_image)
+            current_axis = plt.gca()
 
-        current_axis = plt.gca()
+            if len(image_boxes) > 0:
+                for i, box in enumerate(image_boxes):
+                    # trasformo le coordinate normalizzate in coordinate assolute
+                    xmin = box[0]
+                    ymin = box[1]
+                    xmax = box[2]
+                    ymax = box[3]
+                    color = colors[i % len(colors)]
+                    label = '{}: {:.2f}'.format(classes[image_predicted_labels[i]], image_scores[i][0])
+                    current_axis.add_patch(plt.Rectangle((xmin, ymin), xmax - xmin, ymax - ymin, color=color, fill=False, linewidth=2))
+                    current_axis.text(xmin, ymin, label, size='x-large', color='white', bbox={'facecolor': color, 'alpha': 1.0})
+            plt.savefig(os.path.join(config.test_result_path, imgf))
+            plt.close()
 
-        if len(image_boxes) > 0:
-            for i, box in enumerate(image_boxes):
-                # trasformo le coordinate normalizzate in coordinate assolute
-                xmin = box[0]
-                ymin = box[1]
-                xmax = box[2]
-                ymax = box[3]
-                color = colors[i % len(colors)]
-                label = '{}: {:.2f}'.format(classes[image_predicted_labels[i]], image_scores[i][0])
-                current_axis.add_patch(plt.Rectangle((xmin, ymin), xmax - xmin, ymax - ymin, color=color, fill=False, linewidth=2))
-                current_axis.text(xmin, ymin, label, size='x-large', color='white', bbox={'facecolor': color, 'alpha': 1.0})
-        plt.savefig(os.path.join(config.test_result_path, imgf))
-        plt.close()
         print("Elaborata immagine '" + imgf + "'")

@@ -2,7 +2,9 @@ import os
 import random
 import threading
 import warnings
+from xml.dom import minidom
 
+import cv2
 import keras
 import numpy as np
 from PIL import Image
@@ -17,6 +19,32 @@ try:
     import xml.etree.cElementTree as ET
 except ImportError:
     import xml.etree.ElementTree as ET
+
+
+def save_annotations(filepath, filename, image, boxes):
+    cv2.imwrite(os.path.join(os.path.join(filepath, "images"), filename + ".jpg"), image)
+    root = ET.Element("annotation")
+    ET.SubElement(root, "folder").text = "images"
+    ET.SubElement(root, "filename").text = filename + ".jpg"
+    size = ET.SubElement(root, "size")
+    ET.SubElement(size, "width").text = str(image.shape[0])
+    ET.SubElement(size, "height").text = str(image.shape[1])
+    ET.SubElement(size, "depth").text = str(image.shape[2])
+    for box in boxes:
+        object = ET.SubElement(root, "object")
+        ET.SubElement(object, "name").text = box["name"]
+        ET.SubElement(object, "pose").text = "Unspecified"
+        ET.SubElement(object, "truncated").text = "0"
+        ET.SubElement(object, "difficult").text = "0"
+        bndbox = ET.SubElement(object, "bndbox")
+        ET.SubElement(bndbox, "xmin").text = str(box["xmin"])
+        ET.SubElement(bndbox, "ymin").text = str(box["ymin"])
+        ET.SubElement(bndbox, "xmax").text = str(box["xmax"])
+        ET.SubElement(bndbox, "ymax").text = str(box["ymax"])
+
+    xmlstr = minidom.parseString(ET.tostring(root)).toprettyxml(indent="    ")
+    myfile = open(os.path.join(os.path.join(filepath, "annotations"), filename + ".xml"), "w")
+    myfile.write(xmlstr)
 
 
 def _find_node(parent, name, debug_name=None, parse=None):
@@ -93,7 +121,7 @@ class Generator(object):
     def filter_annotations(self, image_group, annotations_group, group):
         # verifica le annotazioni
         for index, (image, annotations) in enumerate(zip(image_group, annotations_group)):
-            assert (isinstance(annotations, np.ndarray)), '\'load_annotations\' dovrebbe ritornare una lista di numpy array, invece ricevo: {}'\
+            assert (isinstance(annotations, np.ndarray)), '\'load_annotations\' dovrebbe ritornare una lista di numpy array, invece ricevo: {}' \
                 .format(type(annotations))
 
             annotations[:, 0] = np.maximum(0, annotations[:, 0])

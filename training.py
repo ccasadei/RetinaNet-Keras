@@ -5,7 +5,7 @@ from keras.utils import plot_model
 
 from config import Config
 from model.callbacks import get_callbacks
-from model.generator import getGenerators
+from model.generator import get_generators
 from model.loss import getLoss
 from model.optimizer import get_optimizer
 from model.resnet import resnet50_retinanet
@@ -47,12 +47,13 @@ if config.model_image:
     plot_model(model, to_file='model_image.jpg')
 
 # preparo i generatori di immagini per il training e la valutazione
-train_generator, val_generator, n_train_samples, n_val_samples = getGenerators(config.images_path,
-                                                                               config.annotations_path,
-                                                                               config.train_val_split,
-                                                                               config.batch_size,
-                                                                               config.classes,
-                                                                               debug=False)
+train_generator, val_generator, n_train_samples, n_val_samples = get_generators(config.images_path,
+                                                                                config.annotations_path,
+                                                                                config.train_val_split,
+                                                                                config.batch_size,
+                                                                                config.classes,
+                                                                                transform=config.augmentation,
+                                                                                debug=False)
 
 # preparo i callback
 callbacks = get_callbacks(config)

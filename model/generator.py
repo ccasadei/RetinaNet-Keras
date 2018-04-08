@@ -5,7 +5,7 @@ from model.pascal_voc import PascalVocGenerator
 from model.transform import random_transform_generator
 
 
-def getGenerators(images_path, annotations_path, train_val_split, batch_size, classes, shuffle=True, debug=False, transform=True):
+def get_generators(images_path, annotations_path, train_val_split, batch_size, classes, shuffle=True, debug=False, transform=True):
     # crea un generatore di trasformazioni random per l'augmentation del training dataset
     if transform:
         transform_generator = random_transform_generator(min_rotation=-0.1,
@@ -52,7 +52,6 @@ def getGenerators(images_path, annotations_path, train_val_split, batch_size, cl
             transform_generator=None,
             batch_size=batch_size
         )
-
         return train_generator, validation_generator, train_generator.size(), validation_generator.size()
     else:
-        return train_generator, None, train_generator.size(), None
+        return train_generator, None, train_generator.size(), 0
