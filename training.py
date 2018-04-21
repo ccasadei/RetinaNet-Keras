@@ -8,13 +8,19 @@ from model.callbacks import get_callbacks
 from model.generator import get_generators
 from model.loss import getLoss
 from model.optimizer import get_optimizer
-from model.resnet import resnet50_retinanet
+from model.resnet import resnet50_retinanet, resnet152_retinanet
 
 # leggo la configurazione
 config = Config('configRetinaNet.json')
 
 # creazione del modello
-model, bodyLayers = resnet50_retinanet(len(config.classes), weights='imagenet', nms=True)
+if config.type == '50':
+    model, bodyLayers = resnet50_retinanet(len(config.classes), weights='imagenet', nms=True)
+elif config.type == '152':
+    model, bodyLayers = resnet152_retinanet(len(config.classes), weights='imagenet', nms=True)
+else:
+    print("Tipo modello non riconosciuto ({})".format(config.type))
+    exit(1)
 
 model.summary()
 
@@ -24,8 +30,14 @@ if os.path.isfile(config.pretrained_weights_path):
     print("Caricati pesi PRETRAINED")
 else:
     # altrimenti carico i pesi di base (escludendo i layer successivi a quello indicato, compreso)
-    if os.path.isfile(config.base_weights_path):
-        model.load_weights(config.base_weights_path, by_name=True, skip_mismatch=True)
+    if config.type == '50':
+        base_weights = config.base_weights50_path
+    elif config.type == '152':
+        base_weights = config.base_weights152_path
+    else:
+        base_weights = ""
+    if os.path.isfile(base_weights):
+        model.load_weights(base_weights, by_name=True, skip_mismatch=True)
         print("Caricati pesi BASE")
     else:
         print("Senza pesi")
@@ -41,7 +53,7 @@ if config.do_freeze_layers:
     model.summary()
 
 # compilo il model con loss function e ottimizzatore
-model.compile(loss=getLoss(), optimizer=get_optimizer(config.base_lr))
+model.compile(loss=getLoss(), optimizer=get_optimizer(config.base_lr), metrics=['accuracy'])
 
 if config.model_image:
     plot_model(model, to_file='model_image.jpg')

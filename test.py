@@ -10,7 +10,7 @@ from model.image import read_image_bgr, preprocess_image, resize_image, read_ima
 
 import numpy as np
 
-from model.resnet import resnet50_retinanet
+from model.resnet import resnet50_retinanet, resnet152_retinanet
 from matplotlib import pyplot as plt
 
 from config import Config
@@ -21,7 +21,13 @@ config = Config('configRetinaNet.json')
 
 # se non ci sono pesi specifici, uso i pesi base e le classi base
 wname = 'BASE'
-wpath = config.base_weights_path
+if config.type == '50':
+    wpath = config.base_weights50_path
+elif config.type == '152':
+    wpath = config.base_weights152_path
+else:
+    print("Tipo modello non riconosciuto ({})".format(config.type))
+    exit(1)
 classes = ['person',
            'bicycle',
            'car',
@@ -114,7 +120,13 @@ if os.path.isfile(config.pretrained_weights_path):
     classes = config.classes
 
 # creo il modello
-model, _ = resnet50_retinanet(len(classes), weights=None, nms=True)
+if config.type == '50':
+    model, _ = resnet50_retinanet(len(config.classes), weights='imagenet', nms=True)
+elif config.type == '152':
+    model, _ = resnet152_retinanet(len(config.classes), weights='imagenet', nms=True)
+else:
+    print("Tipo modello non riconosciuto ({})".format(config.type))
+    exit(1)
 
 # carico i pesi
 model.load_weights(wpath, by_name=True, skip_mismatch=True)

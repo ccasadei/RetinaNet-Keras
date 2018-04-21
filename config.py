@@ -16,7 +16,8 @@ class Config:
         self.augmentation = config['train']['augmentation']
 
         self.pretrained_weights_path = config['path']['pretrained_weights']
-        self.base_weights_path = config['path']['base_weights']
+        self.base_weights50_path = config['path']['base_weights_50']
+        self.base_weights152_path = config['path']['base_weights_152']
         self.trained_weights_path = config['path']['trained_weights']
         self.chkpnt_weights_path = config['path']['chkpnt_weights']
         self.images_path = config['path']['images']
@@ -25,6 +26,7 @@ class Config:
         self.test_result_path = config['path']['test_result']
         self.log_path = config['path']['log']
 
+        self.type = config['model']['type']
         self.model_image = config['model']['model_image']
         self.classes = config['model']['classes']
 

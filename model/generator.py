@@ -1,5 +1,8 @@
 import os
 import random
+
+import time
+
 from model.pascal_voc import PascalVocGenerator
 
 from model.transform import random_transform_generator
@@ -23,8 +26,9 @@ def get_generators(images_path, annotations_path, train_val_split, batch_size, c
 
     # ottengo l'elenco di tutte le annotations
     annotation_files = [os.path.splitext(f)[0] for f in os.listdir(annotations_path) if os.path.isfile(os.path.join(annotations_path, f))]
-    # mescola l'ordine delle righe
+    # mescola l'ordine delle righe (casuale, ma ripetibile)
     if shuffle:
+        random.seed = 19081974
         random.shuffle(annotation_files)
     max_id = int(train_val_split * len(annotation_files))
     train_ids = annotation_files[:max_id]
@@ -32,6 +36,8 @@ def get_generators(images_path, annotations_path, train_val_split, batch_size, c
         val_ids = annotation_files[max_id:]
     else:
         val_ids = None
+    # resetto il seed random con un numero dipendente dall'istante attuale in millisecondi
+    random.seed = int(round(time.time() * 1000))
 
     train_generator = PascalVocGenerator(
         annotations_path,

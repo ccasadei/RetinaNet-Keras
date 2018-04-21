@@ -8,7 +8,7 @@ from keras.engine.topology import Container
 from keras.layers import Conv2D
 from keras import backend as K
 
-from model.resnet import resnet50_retinanet
+from model.resnet import resnet50_retinanet, resnet152_retinanet
 from config import Config
 import os
 import cv2
@@ -26,7 +26,13 @@ def crea_dizionario_layer_ricorsivo(layer, dict):
 config = Config('configRetinaNet.json')
 
 # se non ci sono pesi specifici, uso i pesi base e le classi base (COCO)
-wpath = config.base_weights_path
+if config.type == '50':
+    wpath = config.base_weights50_path
+elif config.type == '152':
+    wpath = config.base_weights152_path
+else:
+    print("Tipo modello non riconosciuto ({})".format(config.type))
+    exit(1)
 wname = "BASE"
 classes = ['person',
            'bicycle',
@@ -120,7 +126,13 @@ elif os.path.isfile(config.pretrained_weights_path):
     wname = "PRETRAINED"
 
 # creo il modello
-model, resnet = resnet50_retinanet(len(classes), weights=None, nms=True)
+if config.type == '50':
+    model, bodyLayers = resnet50_retinanet(len(config.classes), weights='imagenet', nms=True)
+elif config.type == '152':
+    model, bodyLayers = resnet152_retinanet(len(config.classes), weights='imagenet', nms=True)
+else:
+    print("Tipo modello non riconosciuto ({})".format(config.type))
+    exit(1)
 
 # carico i pesi
 model.load_weights(wpath, by_name=True, skip_mismatch=True)

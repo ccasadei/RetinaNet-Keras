@@ -1,20 +1,21 @@
 {
   "train": {
-    "batch_size": 8,
-    "epochs": 200,
-    "base_lr": 1e-5,
-    "patience": 100,
-    "do_freeze_layers": false,
+    "batch_size": 1,
+    "epochs": 10000,
+    "base_lr": 1e-6,
+    "patience": 0,
+    "do_freeze_layers": true,
     "freeze_pops": 0,
     "ofreeze_pops": 24,
-    "train_val_split": 0.8,
+    "train_val_split": 0.9,
     "augmentation": false
   },
   "path": {
     "pretrained_weights": "./h5/pretrained.h5",
-    "base_weights": "./h5/base.h5",
+    "base_weights_50": "./h5/base50.h5",
+    "base_weights_152": "./h5/base152.h5",
     "trained_weights": "./h5/result.h5",
-    "chkpnt_weights": "./h5/chkpnt_best.h5",
+    "chkpnt_weights": "./h5/chkpnt_best_{val_loss:.4f}.h5",
     "images": "../../dataset/person_calling/images/",
     "annotations": "../../dataset/person_calling/annotations/",
     "test_images": "../../dataset/test/",
@@ -22,6 +23,7 @@
     "log": "./logs/"
   },
   "model": {
+    "type": "152",
     "model_image": false,
     "classes": [
       "person_calling"
