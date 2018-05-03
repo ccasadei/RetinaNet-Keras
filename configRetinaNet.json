@@ -1,12 +1,12 @@
 {
   "train": {
-    "batch_size": 1,
+    "batch_size": 2,
     "epochs": 10000,
-    "base_lr": 1e-6,
+    "base_lr": 1e-8,
     "patience": 0,
     "do_freeze_layers": true,
-    "freeze_pops": 0,
-    "ofreeze_pops": 24,
+    "freeze_layer_stop_name_50": "",
+    "freeze_layer_stop_name_152": "",
     "train_val_split": 0.9,
     "augmentation": false
   },
@@ -30,7 +30,9 @@
     ]
   },
   "test": {
+    "_COMMENTO1": "save_annotations serve a salvare le annotazioni delle immagini lette da <test_images>",
+    "_COMMENTO2": "e le salva in <test_result>/images e <test_result>/annotations numerandole a partire da <start_index>",
     "save_annotations": false,
-    "start_index": 442201
+    "start_index": 1
   }
 }

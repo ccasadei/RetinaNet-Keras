@@ -11,8 +11,9 @@ class Config:
         self.base_lr = config['train']['base_lr']
         self.patience = config['train']['patience']
         self.do_freeze_layers = config['train']['do_freeze_layers']
+        self.freeze_layer_stop_name_50 = config['train']['freeze_layer_stop_name_50']
+        self.freeze_layer_stop_name_152 = config['train']['freeze_layer_stop_name_152']
         self.train_val_split = config['train']['train_val_split']
-        self.freeze_pops = config['train']['freeze_pops']
         self.augmentation = config['train']['augmentation']
 
         self.pretrained_weights_path = config['path']['pretrained_weights']

@@ -34,20 +34,27 @@ else:
         base_weights = config.base_weights50_path
     elif config.type == '152':
         base_weights = config.base_weights152_path
-    else:
-        base_weights = ""
     if os.path.isfile(base_weights):
         model.load_weights(base_weights, by_name=True, skip_mismatch=True)
         print("Caricati pesi BASE")
     else:
         print("Senza pesi")
 
+if config.type == '50':
+    freeze_layer_stop_name = config.freeze_layer_stop_name_50
+elif config.type == '152':
+    freeze_layer_stop_name = config.freeze_layer_stop_name_152
+
 # eseguo il freeze dei layer più profondi (in base ad una configurazione mi posso fermare)
 if config.do_freeze_layers:
-    for l in bodyLayers[:len(bodyLayers) - config.freeze_pops]:
+    conta = 0
+    for l in bodyLayers:
+        if l.name == freeze_layer_stop_name:
+            break
         l.trainable = False
+        conta += 1
     print("")
-    print("Eseguito freeze di " + str(len(bodyLayers) - config.freeze_pops) + " layers")
+    print("Eseguito freeze di " + str(conta) + " layers")
     print("Nuovo summary dopo FREEZE")
     print("")
     model.summary()

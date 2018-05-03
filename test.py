@@ -134,7 +134,7 @@ print("Caricati pesi " + wname)
 
 # carico le immagini originali e quelle ridimensionate in due array
 # ne prendo una alla volta per minimizzare la memoria GPU necessaria
-start_index = config.test_start_index - 1
+start_index = config.test_start_index
 for nimage, imgf in enumerate(sorted(os.listdir(config.test_images_path))):
     imgfp = os.path.join(config.test_images_path, imgf)
     if os.path.isfile(imgfp):
