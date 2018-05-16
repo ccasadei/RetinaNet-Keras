@@ -1,19 +1,17 @@
 {
   "train": {
-    "batch_size": 2,
+    "batch_size": 1,
     "epochs": 10000,
-    "base_lr": 1e-8,
+    "base_lr": 1e-5,
     "patience": 0,
     "do_freeze_layers": true,
-    "freeze_layer_stop_name_50": "",
-    "freeze_layer_stop_name_152": "",
+    "freeze_layer_stop_name": "",
     "train_val_split": 0.9,
     "augmentation": false
   },
   "path": {
     "pretrained_weights": "./h5/pretrained.h5",
-    "base_weights_50": "./h5/base50.h5",
-    "base_weights_152": "./h5/base152.h5",
+    "base_weights": "./h5/base_{}.h5",
     "trained_weights": "./h5/result.h5",
     "chkpnt_weights": "./h5/chkpnt_best_{val_loss:.4f}.h5",
     "images": "../../dataset/person_calling/images/",
@@ -23,11 +21,14 @@
     "log": "./logs/"
   },
   "model": {
-    "type": "152",
+    "_COMMENTO_type": "Valori possibili: resnet50, resnet101, resnet152",
+    "type": "resnet50",
     "model_image": false,
     "classes": [
       "person_calling"
-    ]
+    ],
+    "img_min_size": 800,
+    "img_max_size": 1333
   },
   "test": {
     "_COMMENTO1": "save_annotations serve a salvare le annotazioni delle immagini lette da <test_images>",

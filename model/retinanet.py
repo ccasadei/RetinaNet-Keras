@@ -153,7 +153,7 @@ def __build_anchors(anchor_parameters, features):
 
 def retinanet(
         inputs,
-        backbone,
+        backbone_outputs,
         num_classes,
         anchor_parameters=AnchorParameters.default,
         create_pyramid_features=__create_pyramid_features,
@@ -163,8 +163,7 @@ def retinanet(
     if submodels is None:
         submodels = default_submodels(num_classes, anchor_parameters)
 
-    # al momento ignoro "C2"
-    _, C3, C4, C5 = backbone.outputs
+    C3, C4, C5 = backbone_outputs
 
     # preparo la piramide degli estrattori di features
     features = create_pyramid_features(C3, C4, C5)
@@ -175,8 +174,8 @@ def retinanet(
     return keras.models.Model(inputs=inputs, outputs=[anchors] + pyramid, name=name)
 
 
-def retinanet_bbox(inputs, num_classes, nms=True, name='retinanet-bbox', *args, **kwargs):
-    model = retinanet(inputs=inputs, num_classes=num_classes, *args, **kwargs)
+def retinanet_bbox(inputs, num_classes, backbone_outputs, nms=True, name='retinanet-bbox', *args, **kwargs):
+    model = retinanet(inputs=inputs, backbone_outputs=backbone_outputs, num_classes=num_classes, *args, **kwargs)
 
     # anchors, regression e classification devono essere i primi valori dell'output
     anchors = model.outputs[0]

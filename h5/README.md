@@ -1,10 +1,14 @@
-I pesi di **BASE** sono scaricabili da qui: 
-
-https://github.com/fizyr/keras-models/releases
+I pesi di **BACKEND** sono scaricati in automatico.
 
 Sono disponibili vari pesi a seconda del modello ResNet applicato (50, 101, 152)
 
-Il peso va rinominato in `base.h5`.
+I pesi di **BASE** del modello allenato su COCO (80 classi) sono scaricabili da qui: 
+
+https://github.com/fizyr/keras-retinanet/releases
+
+Al momento sono disponibili solo quelli per RESNET50.
+
+Il peso va rinominato in `base_{}.h5` dove tra `{}` va indicato il modello di backend (`resnet50`, `resnet101`, `resnet152`) 
 
 Il file `pretrained.h5` se esiste è quello che viene caricato all'inizio del training come partenza (è impostato sulle classi indicate in `configRetinaNet.json`).
 

@@ -122,7 +122,7 @@ def apply_transform(matrix, image, params):
     return output
 
 
-def resize_image(img, min_side=600, max_side=1024):
+def resize_image(img, min_side, max_side):
     (rows, cols, _) = img.shape
 
     smallest_side = min(rows, cols)

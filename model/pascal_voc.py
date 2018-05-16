@@ -65,12 +65,12 @@ def _find_node(parent, name, debug_name=None, parse=None):
 class Generator(object):
     def __init__(
             self,
+            image_min_side,
+            image_max_side,
             transform_generator=None,
             batch_size=1,
             group_method='ratio',  # può valere 'none', 'random', 'ratio'
             shuffle_groups=True,
-            image_min_side=600,
-            image_max_side=1024,
             transform_parameters=None,
             debug=False
     ):

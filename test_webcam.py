@@ -5,20 +5,14 @@ import numpy as np
 
 from config import Config
 from model.image import preprocess_image, resize_image
-from model.resnet import resnet50_retinanet, resnet152_retinanet
+from model.resnet import resnet_retinanet
 
 # leggo la configurazione
 config = Config('configRetinaNet.json')
 
 # se non ci sono pesi specifici, uso i pesi base e le classi base
 wname = 'BASE'
-if config.type == '50':
-    wpath = config.base_weights50_path
-elif config.type == '152':
-    wpath = config.base_weights152_path
-else:
-    print("Tipo modello non riconosciuto ({})".format(config.type))
-    exit(1)
+wpath = config.base_weights_path
 classes = ['person',
            'bicycle',
            'car',
@@ -111,15 +105,15 @@ if os.path.isfile(config.pretrained_weights_path):
     classes = config.classes
 
 # creo il modello
-if config.type == '50':
-    model, _ = resnet50_retinanet(len(config.classes), weights='imagenet', nms=True)
-elif config.type == '152':
-    model, _ = resnet152_retinanet(len(config.classes), weights='imagenet', nms=True)
+if config.type.startswith('resnet'):
+    model, _ = resnet_retinanet(len(classes), backbone=config.type, weights='imagenet', nms=True)
 else:
+    model = None
     print("Tipo modello non riconosciuto ({})".format(config.type))
     exit(1)
 
 # carico i pesi
+print("Modello backend: ", config.type)
 model.load_weights(wpath, by_name=True, skip_mismatch=True)
 print("Caricati pesi " + wname)
 
@@ -131,7 +125,7 @@ while True:
     orig_image = img.copy()
 
     img = preprocess_image(img.copy())
-    img, scale = resize_image(img)
+    img, scale = resize_image(img, min_side=config.img_min_size, max_side=config.img_max_size)
 
     # eseguo la perdizione sulle immagini ridimensionate
     _, _, detections = model.predict_on_batch(np.expand_dims(img, axis=0))

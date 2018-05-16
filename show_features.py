@@ -1,15 +1,16 @@
 import matplotlib as mpl
+
+mpl.use('Agg')
+
 import numpy as np
 
 from model.image import resize_image
-
-mpl.use('Agg')
 
 from keras.engine.topology import Container
 from keras.layers import Conv2D
 from keras import backend as K
 
-from model.resnet import resnet50_retinanet, resnet152_retinanet
+from model.resnet import resnet_retinanet
 from config import Config
 import os
 import cv2
@@ -27,13 +28,7 @@ def crea_dizionario_layer_ricorsivo(layer, dict):
 config = Config('configRetinaNet.json')
 
 # se non ci sono pesi specifici, uso i pesi base e le classi base (COCO)
-if config.type == '50':
-    wpath = config.base_weights50_path
-elif config.type == '152':
-    wpath = config.base_weights152_path
-else:
-    print("Tipo modello non riconosciuto ({})".format(config.type))
-    exit(1)
+wpath = config.base_weights_path
 wname = "BASE"
 classes = ['person',
            'bicycle',
@@ -127,11 +122,11 @@ elif os.path.isfile(config.pretrained_weights_path):
     wname = "PRETRAINED"
 
 # creo il modello
-if config.type == '50':
-    model, bodyLayers = resnet50_retinanet(len(config.classes), weights='imagenet', nms=True)
-elif config.type == '152':
-    model, bodyLayers = resnet152_retinanet(len(config.classes), weights='imagenet', nms=True)
+if config.type.startswith('resnet'):
+    model, bodyLayers = resnet_retinanet(len(classes), backbone=config.type, weights='imagenet', nms=True)
 else:
+    model = None
+    bodyLayers = None
     print("Tipo modello non riconosciuto ({})".format(config.type))
     exit(1)
 
@@ -148,7 +143,7 @@ crea_dizionario_layer_ricorsivo(model, layer_dict)
 for imgf in os.listdir(config.test_images_path):
     imgfp = os.path.join(config.test_images_path, imgf)
     if os.path.isfile(imgfp):
-        orig_image, _ = resize_image(cv2.imread(imgfp))
+        orig_image, _ = resize_image(cv2.imread(imgfp), min_side=config.img_min_size, max_side=config.img_max_size)
         cv2.imshow('Immagine', orig_image)
 
         skip_img = False
